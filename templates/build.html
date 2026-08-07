@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Build Your PC{% endblock %}
+{% block content %}
+<style>
+    .component-card {
+        cursor: pointer;
+        border: 2px solid #dee2e6;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+        transition: 0.2s;
+        height: 100%;
+    }
+    .component-card:hover { border-color: #0d6efd; }
+    .component-card.selected { border-color: #198754; background-color: #f0fff4; }
+    .component-card img { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; }
+    .summary-box { position: sticky; top: 20px; }
+</style>
+
+<h1 class="mb-4">Build Your PC</h1>
+
+{% if issues %}
+<div class="alert alert-danger">
+    <strong>Compatibility Issues Found:</strong>
+    <ul class="mb-0">
+        {% for issue in issues %}<li>{{ issue }}</li>{% endfor %}
+    </ul>
+</div>
+{% elif selected %}
+<div class="alert alert-success">All selected components are compatible!</div>
+{% endif %}
+
+<form method="POST">
+    <div class="row">
+        <div class="col-md-8">
+            {% for category, items in products_by_category.items() %}
+            <h5 class="mt-3">{{ category }}</h5>
+            <div class="row mb-3">
+                {% for item in items %}
+                <div class="col-6 col-md-3 mb-3">
+                    <label class="w-100">
+                        <input type="radio" name="{{ category }}" value="{{ item.id }}"
+                            style="display:none;"
+                            {% if selected.get(category) and selected[category].id == item.id %}checked{% endif %}
+                            onchange="this.closest('form').requestSubmit()">
+                        <div class="component-card {% if selected.get(category) and selected[category].id == item.id %}selected{% endif %}">
+                            <img src="{{ item.image }}" alt="{{ item.name }}">
+                            <div style="font-size: 0.85rem; font-weight: 500;">{{ item.name }}</div>
+                            <div style="font-size: 0.8rem; color: #666;">₹{{ item.price }}</div>
+                        </div>
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Check Compatibility</button>
+            {% if current_user.is_authenticated and not issues and selected %}
+            <button type="submit" formaction="{{ url_for('add_to_cart') }}" class="btn btn-success">Add Build to Cart</button>
+            {% endif %}
+        </div>
+
+        <div class="col-md-4">
+            <div class="summary-box card p-3">
+                <h5>Your Build</h5>
+                {% set total = namespace(value=0) %}
+                {% for category, product in selected.items() %}
+                    {% if product %}
+                    <div class="d-flex align-items-center mb-2">
+                        <img src="{{ product.image }}" width="40" height="40" style="border-radius:6px; margin-right:8px;">
+                        <div style="font-size: 0.85rem;">
+                            <div>{{ product.name }}</div>
+                            <div style="color:#666;">₹{{ product.price }}</div>
+                        </div>
+                    </div>
+                    {% set total.value = total.value + product.price %}
+                    {% endif %}
+                {% endfor %}
+                <hr>
+                <strong>Total: ₹{{ total.value }}</strong>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
