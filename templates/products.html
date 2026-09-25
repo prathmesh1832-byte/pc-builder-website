@@ -6,10 +6,10 @@
     {% for product in products %}
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-    <img src="{{ product.image }}" class="card-img-top" style="height:180px; object-fit:cover;" alt="{{ product.name }}">
-    <div class="card-body">
-        <h5 class="card-title">{{ product.name }}</h5>
-        <p class="card-text">
+<img src="{{ url_for('static', filename='images/' + product.image) }}" class="card-img-top" style="height:180px; object-fit:cover;" alt="{{ product.name }}">        <h5 class="card-title">{{ product.name }}</h5>
+<div class="card-body">
+<h5 class="card-title">{{ product.name }}</h5>        
+<p class="card-text">
             Category: {{ product.category }}<br>
             Brand: {{ product.brand }}<br>
             Price: ₹{{ product.price }}<br>
