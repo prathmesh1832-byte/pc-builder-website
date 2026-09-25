@@ -48,7 +48,7 @@
             {% for product in featured %}
             <div class="col-md-3 mb-4">
                 <div class="card h-100">
-                    <img src="{{ product.image }}" class="card-img-top" style="height:150px; object-fit:cover;" alt="{{ product.name }}">
+                    <img src="{{ url_for('static', filename='images/' + product.image) }}" class="card-img-top" style="height:150px; object-fit:cover;" alt="{{ product.name }}">
                     <div class="card-body">
                         <h6 class="card-title">{{ product.name }}</h6>
                         <p class="card-text text-muted">₹{{ product.price }}</p>
