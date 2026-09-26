@@ -274,12 +274,14 @@ with app.app_context():
     if Product.query.count() == 0:
         import add_data
 
-    from models import User
+        from models import User
     admin = User.query.filter_by(email='prathmesh1832@gmail.com').first()
-    if admin:
-        admin.set_password('BuildMyRig@2026')
-        admin.is_admin = True
-        db.session.commit()        
+    if not admin:
+        admin = User(name='Prathmesh', email='prathmesh1832@gmail.com')
+        db.session.add(admin)
+    admin.set_password('BuildMyRig@2026')
+    admin.is_admin = True
+    db.session.commit()       
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
